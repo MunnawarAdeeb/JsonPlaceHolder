@@ -1,31 +1,39 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { UserNameContext } from "../Context/user.context";
 import axios from "axios";
-import Card from "./User.card.component"
+import Card from "./User.card.component";
+
 const UserComponent = () => {
   const [user, setUser] = useState([]);
+  const { setUserName } = useContext(UserNameContext);
+
   useEffect(() => {
-    axios
-      .get("https://jsonplaceholder.typicode.com/users")
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "https://jsonplaceholder.typicode.com/users"
+        );
         setUser(response.data);
-      })
-      .catch((error) => {
+        setUserName(response.data);
+      } catch (error) {
         console.error("Error fetching data:", error);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
 
   return (
     <>
-       
       <h1 style={{ marginLeft: "100px" }}>Users</h1>
-      <div style={{ height: '30vh', overflow: 'auto'}}>
-      <ul>
-        {user
-          .filter((_, index) => index < 3)
-          .map((user) => (
-            <Card key={user.id} user={user} />
-          ))}
-      </ul>
+      <div style={{ height: "30vh", overflow: "auto" }}>
+        <ul>
+          {user
+            .filter((_, index) => index < 3)
+            .map((user) => (
+              <Card key={user.id} user={user} />
+            ))}
+        </ul>
       </div>
     </>
   );
